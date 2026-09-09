@@ -1,10 +1,10 @@
 === VTX Redirects ===
-Contributors: vortex
+Contributors: vtxlabs
 Tags: redirects, redirect manager, 301 redirects, seo, migration
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.0.1
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,20 @@ No. Redirect data is intentionally preserved so an accidental uninstall does not
 3. Bulk editor and activity log.
 
 == Changelog ==
+
+= 2.1.1 =
+* Added youneed.dev branding and restrained orange accents.
+* Corrected icon alignment across buttons, tabs, drawers, and table actions.
+* Redesigned the administration experience around a full-width rules workspace.
+* Moved new-rule creation and settings into accessible side panels.
+* Added status filtering, improved search controls, and clearer rule actions.
+* Reworked bulk editing and activity views for faster migration workflows.
+* Improved responsive behavior, keyboard focus states, and reduced-motion support.
+
+= 2.0.2 =
+* Refreshed the administration experience with a modern, responsive VTX Labs interface.
+* Improved visual hierarchy, table readability, focus states, mobile behavior, and reduced-motion support.
+* Updated WordPress.org contributor metadata to vtxlabs.
 
 = 2.0.1 =
 * Finalized WordPress coding standards compliance and normalized cross-platform line endings.

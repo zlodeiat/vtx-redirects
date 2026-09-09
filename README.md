@@ -1,6 +1,6 @@
 # VTX Redirects
 
-VTX Redirects is a small, production-oriented WordPress redirect manager focused on predictable exact-path redirects and maintainable code.
+VTX Redirects is a modern, production-oriented WordPress redirect manager focused on predictable exact-path redirects and maintainable code.
 
 ## Highlights
 
@@ -57,3 +57,12 @@ Before submitting a release, test it against the current stable WordPress versio
 ## License
 
 GPL-2.0-or-later.
+
+
+## Author
+
+Built by Yavor Zagorski / VTX Labs.
+
+## 2.1.1 admin experience
+
+Version 2.1.1 introduces a redesigned full-width WordPress admin workspace with an accessible new-rule/settings drawer, status filtering, a streamlined redirect table, and improved bulk-edit and activity views.

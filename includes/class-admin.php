@@ -98,21 +98,23 @@ final class Admin {
 			'vtx-redirects-admin',
 			'VTXRedirects',
 			array(
-				'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
-				'nonce'         => wp_create_nonce( self::NONCE_ACTION ),
-				'scanning'      => __( 'Scanning…', 'vtx-redirects' ),
-				'findUsage'     => __( 'Find usage', 'vtx-redirects' ),
-				'confirmDelete' => __( 'Delete this redirect?', 'vtx-redirects' ),
-				'confirmLogs'   => __( 'Clear all activity logs?', 'vtx-redirects' ),
-				'noLogs'        => __( 'No activity yet.', 'vtx-redirects' ),
-				'noResults'     => __( 'No pages or posts reference this source or destination.', 'vtx-redirects' ),
-				'scanFailed'    => __( 'Scan failed. Please try again.', 'vtx-redirects' ),
-				'columnItem'    => __( 'Page/Post', 'vtx-redirects' ),
-				'columnType'    => __( 'Type', 'vtx-redirects' ),
-				'columnStatus'  => __( 'Status', 'vtx-redirects' ),
-				'columnLinks'   => __( 'Links', 'vtx-redirects' ),
-				'edit'          => __( 'Edit', 'vtx-redirects' ),
-				'view'          => __( 'View', 'vtx-redirects' ),
+				'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
+				'nonce'          => wp_create_nonce( self::NONCE_ACTION ),
+				'scanning'       => __( 'Scanning…', 'vtx-redirects' ),
+				'findUsage'      => __( 'Usage', 'vtx-redirects' ),
+				'drawerAdd'      => __( 'New redirect', 'vtx-redirects' ),
+				'drawerSettings' => __( 'Settings', 'vtx-redirects' ),
+				'confirmDelete'  => __( 'Delete this redirect?', 'vtx-redirects' ),
+				'confirmLogs'    => __( 'Clear all activity logs?', 'vtx-redirects' ),
+				'noLogs'         => __( 'No activity yet.', 'vtx-redirects' ),
+				'noResults'      => __( 'No pages or posts reference this source or destination.', 'vtx-redirects' ),
+				'scanFailed'     => __( 'Scan failed. Please try again.', 'vtx-redirects' ),
+				'columnItem'     => __( 'Page/Post', 'vtx-redirects' ),
+				'columnType'     => __( 'Type', 'vtx-redirects' ),
+				'columnStatus'   => __( 'Status', 'vtx-redirects' ),
+				'columnLinks'    => __( 'Links', 'vtx-redirects' ),
+				'edit'           => __( 'Edit', 'vtx-redirects' ),
+				'view'           => __( 'View', 'vtx-redirects' ),
 			)
 		);
 	}
@@ -143,124 +145,280 @@ final class Admin {
 		$notice   = $this->consume_notice();
 		?>
 		<div class="wrap vtx-wrap">
-			<div class="vtx-hero">
-				<div>
-					<div class="vtx-kicker"><?php esc_html_e( 'Redirect Manager', 'vtx-redirects' ); ?></div>
-					<h1><?php esc_html_e( 'VTX Redirects', 'vtx-redirects' ); ?></h1>
-					<p><?php esc_html_e( 'Manage exact-path redirects without touching server configuration.', 'vtx-redirects' ); ?></p>
+			<header class="vtx-appbar">
+				<div class="vtx-brand-block">
+					<a class="vtx-brand-logo-link" href="https://youneed.dev/" target="_blank" rel="noopener noreferrer" aria-label="<?php esc_attr_e( 'Visit youneed.dev', 'vtx-redirects' ); ?>">
+						<img class="vtx-brand-logo" src="<?php echo esc_url( VTX_REDIRECTS_URL . 'assets/logo-youneeddev.png' ); ?>" alt="youneed.dev">
+					</a>
+					<span class="vtx-brand-divider" aria-hidden="true"></span>
+					<div class="vtx-brand-copy">
+						<div class="vtx-eyebrow"><?php esc_html_e( 'VTX Labs / WordPress Tools', 'vtx-redirects' ); ?></div>
+						<div class="vtx-title-row">
+							<h1><?php esc_html_e( 'Redirects', 'vtx-redirects' ); ?></h1>
+							<span class="vtx-version"><?php echo esc_html( 'v' . VTX_REDIRECTS_VERSION ); ?></span>
+						</div>
+						<p><?php esc_html_e( 'Manage precise URL migrations without touching server configuration.', 'vtx-redirects' ); ?></p>
+					</div>
 				</div>
-				<div class="vtx-stats" aria-label="<?php esc_attr_e( 'Redirect statistics', 'vtx-redirects' ); ?>">
-					<div><strong><?php echo esc_html( number_format_i18n( $total ) ); ?></strong><span><?php esc_html_e( 'Total', 'vtx-redirects' ); ?></span></div>
-					<div><strong><?php echo esc_html( number_format_i18n( $active ) ); ?></strong><span><?php esc_html_e( 'Active', 'vtx-redirects' ); ?></span></div>
-					<div><strong><?php echo esc_html( number_format_i18n( $paused ) ); ?></strong><span><?php esc_html_e( 'Paused', 'vtx-redirects' ); ?></span></div>
+
+				<div class="vtx-appbar-actions">
+					<button class="button vtx-button-quiet" type="button" data-vtx-drawer="settings">
+						<span class="dashicons dashicons-admin-generic" aria-hidden="true"></span>
+						<?php esc_html_e( 'Settings', 'vtx-redirects' ); ?>
+					</button>
+					<button class="button button-primary vtx-button-primary" type="button" data-vtx-drawer="add">
+						<span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
+						<?php esc_html_e( 'New redirect', 'vtx-redirects' ); ?>
+					</button>
 				</div>
-			</div>
+			</header>
 
 			<?php if ( $notice ) : ?>
 				<div class="notice <?php echo esc_attr( 'error' === $notice['type'] ? 'notice-error' : 'notice-success' ); ?> is-dismissible vtx-wp-notice"><p><?php echo esc_html( $notice['message'] ); ?></p></div>
 			<?php endif; ?>
 
-			<div class="vtx-grid">
-				<div class="vtx-sidebar">
-					<section class="vtx-card vtx-add-card">
-						<h2><?php esc_html_e( 'Add redirect', 'vtx-redirects' ); ?></h2>
-						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-							<?php wp_nonce_field( self::NONCE_ACTION ); ?>
-							<input type="hidden" name="action" value="vtx_redirects_save">
-							<input type="hidden" name="vtx_action" value="add">
-							<label><?php esc_html_e( 'Source path', 'vtx-redirects' ); ?><input name="source" required placeholder="/old-page" autocomplete="off"></label>
-							<label><?php esc_html_e( 'Destination', 'vtx-redirects' ); ?><input name="destination" required placeholder="/new-page or https://example.com/" autocomplete="off"></label>
-							<label><?php esc_html_e( 'Status code', 'vtx-redirects' ); ?><?php $this->code_select( 'code', 301 ); ?></label>
-							<label class="vtx-check"><input type="checkbox" name="enabled" value="1" checked> <?php esc_html_e( 'Enable immediately', 'vtx-redirects' ); ?></label>
-							<button class="button button-primary vtx-button" type="submit"><?php esc_html_e( 'Add redirect', 'vtx-redirects' ); ?></button>
-						</form>
-					</section>
+			<section class="vtx-overview" aria-label="<?php esc_attr_e( 'Redirect overview', 'vtx-redirects' ); ?>">
+				<div class="vtx-metric">
+					<span class="vtx-metric-label"><?php esc_html_e( 'Total rules', 'vtx-redirects' ); ?></span>
+					<strong><?php echo esc_html( number_format_i18n( $total ) ); ?></strong>
+					<span class="vtx-metric-meta"><?php esc_html_e( 'Exact-path redirects', 'vtx-redirects' ); ?></span>
+				</div>
+				<div class="vtx-metric">
+					<span class="vtx-metric-label"><?php esc_html_e( 'Active', 'vtx-redirects' ); ?></span>
+					<strong><?php echo esc_html( number_format_i18n( $active ) ); ?></strong>
+					<span class="vtx-metric-meta vtx-metric-meta--good"><?php esc_html_e( 'Currently forwarding', 'vtx-redirects' ); ?></span>
+				</div>
+				<div class="vtx-metric">
+					<span class="vtx-metric-label"><?php esc_html_e( 'Paused', 'vtx-redirects' ); ?></span>
+					<strong><?php echo esc_html( number_format_i18n( $paused ) ); ?></strong>
+					<span class="vtx-metric-meta"><?php esc_html_e( 'Retained but inactive', 'vtx-redirects' ); ?></span>
+				</div>
+				<div class="vtx-health">
+					<div class="vtx-health-icon" aria-hidden="true"><span class="dashicons dashicons-shield-alt"></span></div>
+					<div>
+						<strong><?php esc_html_e( 'Safe redirect mode', 'vtx-redirects' ); ?></strong>
+						<span><?php esc_html_e( 'Loop validation and safe external hosts are enabled.', 'vtx-redirects' ); ?></span>
+					</div>
+				</div>
+			</section>
 
-					<section class="vtx-card">
-						<h2><?php esc_html_e( 'Settings', 'vtx-redirects' ); ?></h2>
+			<section class="vtx-workspace">
+				<nav class="vtx-workspace-nav" aria-label="<?php esc_attr_e( 'Redirect manager sections', 'vtx-redirects' ); ?>">
+					<div class="vtx-tabs" role="tablist">
+						<button class="vtx-tab is-active" id="vtx-tab-rules" role="tab" aria-selected="true" aria-controls="vtx-panel-rules" data-vtx-tab="rules" type="button">
+							<span class="dashicons dashicons-randomize" aria-hidden="true"></span>
+							<?php esc_html_e( 'Rules', 'vtx-redirects' ); ?>
+						</button>
+						<button class="vtx-tab" id="vtx-tab-bulk" role="tab" aria-selected="false" aria-controls="vtx-panel-bulk" data-vtx-tab="bulk" type="button">
+							<span class="dashicons dashicons-editor-code" aria-hidden="true"></span>
+							<?php esc_html_e( 'Bulk edit', 'vtx-redirects' ); ?>
+						</button>
+						<button class="vtx-tab" id="vtx-tab-logs" role="tab" aria-selected="false" aria-controls="vtx-panel-logs" data-vtx-tab="logs" type="button">
+							<span class="dashicons dashicons-backup" aria-hidden="true"></span>
+							<?php esc_html_e( 'Activity', 'vtx-redirects' ); ?>
+						</button>
+					</div>
+
+					<div class="vtx-nav-note">
+						<span class="vtx-status-dot" aria-hidden="true"></span>
+						<?php esc_html_e( 'Changes validate before save', 'vtx-redirects' ); ?>
+					</div>
+				</nav>
+
+				<div class="vtx-panel is-active" id="vtx-panel-rules" role="tabpanel" aria-labelledby="vtx-tab-rules" data-vtx-panel="rules">
+					<div class="vtx-toolbar">
+						<div>
+							<h2><?php esc_html_e( 'Redirect rules', 'vtx-redirects' ); ?></h2>
+							<p><?php esc_html_e( 'Search, edit, pause or audit every migration rule from one view.', 'vtx-redirects' ); ?></p>
+						</div>
+						<div class="vtx-toolbar-controls">
+							<label class="screen-reader-text" for="vtx-status-filter"><?php esc_html_e( 'Filter redirect status', 'vtx-redirects' ); ?></label>
+							<select id="vtx-status-filter" class="vtx-filter-select">
+								<option value="all"><?php esc_html_e( 'All statuses', 'vtx-redirects' ); ?></option>
+								<option value="active"><?php esc_html_e( 'Active only', 'vtx-redirects' ); ?></option>
+								<option value="paused"><?php esc_html_e( 'Paused only', 'vtx-redirects' ); ?></option>
+							</select>
+							<div class="vtx-search-wrap">
+								<span class="dashicons dashicons-search" aria-hidden="true"></span>
+								<label class="screen-reader-text" for="vtx-search"><?php esc_html_e( 'Search redirects', 'vtx-redirects' ); ?></label>
+								<input id="vtx-search" type="search" placeholder="<?php esc_attr_e( 'Search source or destination…', 'vtx-redirects' ); ?>">
+							</div>
+							<button class="button button-primary vtx-button-primary vtx-add-inline" type="button" data-vtx-drawer="add">
+								<span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
+								<?php esc_html_e( 'Add rule', 'vtx-redirects' ); ?>
+							</button>
+						</div>
+					</div>
+
+					<?php if ( empty( $rules ) ) : ?>
+						<div class="vtx-empty-state">
+							<div class="vtx-empty-visual" aria-hidden="true">
+								<span class="vtx-empty-node"></span>
+								<span class="vtx-empty-line"></span>
+								<span class="vtx-empty-node"></span>
+							</div>
+							<h3><?php esc_html_e( 'No redirect rules yet', 'vtx-redirects' ); ?></h3>
+							<p><?php esc_html_e( 'Create your first exact-path redirect. VTX Redirects validates duplicates and loops before anything is saved.', 'vtx-redirects' ); ?></p>
+							<button class="button button-primary vtx-button-primary" type="button" data-vtx-drawer="add"><?php esc_html_e( 'Create first redirect', 'vtx-redirects' ); ?></button>
+						</div>
+					<?php else : ?>
 						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 							<?php wp_nonce_field( self::NONCE_ACTION ); ?>
 							<input type="hidden" name="action" value="vtx_redirects_save">
-							<input type="hidden" name="vtx_action" value="settings">
-							<label class="vtx-check"><input type="checkbox" name="preserve_query" value="1" <?php checked( ! empty( $settings['preserve_query'] ) ); ?>> <?php esc_html_e( 'Preserve incoming query strings when the destination has none', 'vtx-redirects' ); ?></label>
-							<button class="button" type="submit"><?php esc_html_e( 'Save settings', 'vtx-redirects' ); ?></button>
+							<div class="vtx-table-wrap">
+								<table class="vtx-table" id="vtx-rules-table">
+									<thead>
+										<tr>
+											<th class="vtx-col-status"><?php esc_html_e( 'Status', 'vtx-redirects' ); ?></th>
+											<th><?php esc_html_e( 'Source path', 'vtx-redirects' ); ?></th>
+											<th><?php esc_html_e( 'Destination', 'vtx-redirects' ); ?></th>
+											<th class="vtx-col-code"><?php esc_html_e( 'Code', 'vtx-redirects' ); ?></th>
+											<th class="vtx-col-audit"><?php esc_html_e( 'Audit', 'vtx-redirects' ); ?></th>
+											<th class="vtx-col-actions"><?php esc_html_e( 'Actions', 'vtx-redirects' ); ?></th>
+										</tr>
+									</thead>
+									<tbody>
+									<?php foreach ( $rules as $index => $rule ) : ?>
+										<?php $state = empty( $rule['enabled'] ) ? 'paused' : 'active'; ?>
+										<tr data-vtx-state="<?php echo esc_attr( $state ); ?>" data-search="<?php echo esc_attr( strtolower( implode( ' ', array( $rule['source'], $rule['destination'], $rule['code'], $state ) ) ) ); ?>">
+											<td data-label="<?php esc_attr_e( 'Status', 'vtx-redirects' ); ?>">
+												<span class="vtx-status vtx-status--<?php echo esc_attr( $state ); ?>">
+													<span class="vtx-status-dot" aria-hidden="true"></span>
+													<?php echo esc_html( 'paused' === $state ? __( 'Paused', 'vtx-redirects' ) : __( 'Active', 'vtx-redirects' ) ); ?>
+												</span>
+											</td>
+											<td data-label="<?php esc_attr_e( 'Source path', 'vtx-redirects' ); ?>"><input class="vtx-inline vtx-path-input" name="rules[<?php echo esc_attr( $index ); ?>][source]" value="<?php echo esc_attr( $rule['source'] ); ?>"></td>
+											<td data-label="<?php esc_attr_e( 'Destination', 'vtx-redirects' ); ?>"><input class="vtx-inline vtx-destination-input" name="rules[<?php echo esc_attr( $index ); ?>][destination]" value="<?php echo esc_attr( $rule['destination'] ); ?>"></td>
+											<td data-label="<?php esc_attr_e( 'Code', 'vtx-redirects' ); ?>"><?php $this->code_select( 'rules[' . $index . '][code]', (int) $rule['code'], 'vtx-small-select' ); ?></td>
+											<td data-label="<?php esc_attr_e( 'Audit', 'vtx-redirects' ); ?>"><button class="button vtx-icon-text vtx-usage-btn" type="button" data-source="<?php echo esc_attr( $rule['source'] ); ?>" data-destination="<?php echo esc_attr( $rule['destination'] ); ?>"><span class="dashicons dashicons-search" aria-hidden="true"></span><?php esc_html_e( 'Usage', 'vtx-redirects' ); ?></button></td>
+											<td data-label="<?php esc_attr_e( 'Actions', 'vtx-redirects' ); ?>" class="vtx-actions">
+												<button class="button button-primary vtx-save-row" name="vtx_action" value="update:<?php echo esc_attr( $index ); ?>" type="submit"><?php esc_html_e( 'Save', 'vtx-redirects' ); ?></button>
+												<button class="button vtx-icon-only" name="vtx_action" value="toggle:<?php echo esc_attr( $index ); ?>" type="submit" aria-label="<?php echo esc_attr( 'paused' === $state ? __( 'Enable redirect', 'vtx-redirects' ) : __( 'Pause redirect', 'vtx-redirects' ) ); ?>" title="<?php echo esc_attr( 'paused' === $state ? __( 'Enable', 'vtx-redirects' ) : __( 'Pause', 'vtx-redirects' ) ); ?>"><span class="dashicons <?php echo esc_attr( 'paused' === $state ? 'dashicons-controls-play' : 'dashicons-controls-pause' ); ?>" aria-hidden="true"></span></button>
+												<button class="button vtx-icon-only vtx-danger vtx-delete-btn" name="vtx_action" value="delete:<?php echo esc_attr( $index ); ?>" type="submit" aria-label="<?php esc_attr_e( 'Delete redirect', 'vtx-redirects' ); ?>" title="<?php esc_attr_e( 'Delete', 'vtx-redirects' ); ?>"><span class="dashicons dashicons-trash" aria-hidden="true"></span></button>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+									</tbody>
+								</table>
+							</div>
+							<div class="vtx-table-footer">
+								<?php // translators: %d is the number of redirect rules. ?>
+				<span><?php echo esc_html( sprintf( _n( '%d redirect rule', '%d redirect rules', $total, 'vtx-redirects' ), $total ) ); ?></span>
+								<span><?php esc_html_e( 'Each row saves independently.', 'vtx-redirects' ); ?></span>
+							</div>
 						</form>
-					</section>
+					<?php endif; ?>
 				</div>
 
-				<section class="vtx-card vtx-main-card">
-					<div class="vtx-tabs" role="tablist" aria-label="<?php esc_attr_e( 'Redirect manager sections', 'vtx-redirects' ); ?>">
-						<button class="vtx-tab is-active" id="vtx-tab-rules" role="tab" aria-selected="true" aria-controls="vtx-panel-rules" data-vtx-tab="rules" type="button"><?php esc_html_e( 'Rules', 'vtx-redirects' ); ?></button>
-						<button class="vtx-tab" id="vtx-tab-bulk" role="tab" aria-selected="false" aria-controls="vtx-panel-bulk" data-vtx-tab="bulk" type="button"><?php esc_html_e( 'Bulk edit', 'vtx-redirects' ); ?></button>
-						<button class="vtx-tab" id="vtx-tab-logs" role="tab" aria-selected="false" aria-controls="vtx-panel-logs" data-vtx-tab="logs" type="button"><?php esc_html_e( 'Activity', 'vtx-redirects' ); ?></button>
-					</div>
-
-					<div class="vtx-panel is-active" id="vtx-panel-rules" role="tabpanel" aria-labelledby="vtx-tab-rules" data-vtx-panel="rules">
-						<div class="vtx-toolbar">
-							<h2><?php esc_html_e( 'Redirect rules', 'vtx-redirects' ); ?></h2>
-							<label class="screen-reader-text" for="vtx-search"><?php esc_html_e( 'Search redirects', 'vtx-redirects' ); ?></label>
-							<input id="vtx-search" type="search" placeholder="<?php esc_attr_e( 'Search redirects…', 'vtx-redirects' ); ?>">
+				<div class="vtx-panel" id="vtx-panel-bulk" role="tabpanel" aria-labelledby="vtx-tab-bulk" data-vtx-panel="bulk" hidden>
+					<div class="vtx-editor-layout">
+						<div class="vtx-editor-intro">
+							<span class="vtx-section-kicker"><?php esc_html_e( 'Migration workspace', 'vtx-redirects' ); ?></span>
+							<h2><?php esc_html_e( 'Bulk editor', 'vtx-redirects' ); ?></h2>
+							<p><?php esc_html_e( 'Replace the full redirect set in one validated operation. Ideal for large migrations and spreadsheet imports.', 'vtx-redirects' ); ?></p>
+							<div class="vtx-format-card">
+								<strong><?php esc_html_e( 'Line format', 'vtx-redirects' ); ?></strong>
+								<code>/source | /destination | 301 | active</code>
+								<span><?php esc_html_e( 'Use “paused” for disabled rules.', 'vtx-redirects' ); ?></span>
+							</div>
 						</div>
-
-						<?php if ( empty( $rules ) ) : ?>
-							<div class="vtx-empty"><strong><?php esc_html_e( 'No redirects yet.', 'vtx-redirects' ); ?></strong><p><?php esc_html_e( 'Add your first rule using the form on the left.', 'vtx-redirects' ); ?></p></div>
-						<?php else : ?>
-							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-								<?php wp_nonce_field( self::NONCE_ACTION ); ?>
-								<input type="hidden" name="action" value="vtx_redirects_save">
-								<div class="vtx-table-wrap">
-									<table class="vtx-table" id="vtx-rules-table">
-										<thead><tr><th><?php esc_html_e( 'Status', 'vtx-redirects' ); ?></th><th><?php esc_html_e( 'Source', 'vtx-redirects' ); ?></th><th><?php esc_html_e( 'Destination', 'vtx-redirects' ); ?></th><th><?php esc_html_e( 'Code', 'vtx-redirects' ); ?></th><th><?php esc_html_e( 'Usage', 'vtx-redirects' ); ?></th><th><?php esc_html_e( 'Actions', 'vtx-redirects' ); ?></th></tr></thead>
-										<tbody>
-										<?php foreach ( $rules as $index => $rule ) : ?>
-											<tr data-search="<?php echo esc_attr( strtolower( implode( ' ', array( $rule['source'], $rule['destination'], $rule['code'], empty( $rule['enabled'] ) ? 'paused disabled' : 'active enabled' ) ) ) ); ?>">
-												<td data-label="<?php esc_attr_e( 'Status', 'vtx-redirects' ); ?>"><span class="vtx-pill <?php echo esc_attr( empty( $rule['enabled'] ) ? 'is-paused' : 'is-active' ); ?>"><?php echo esc_html( empty( $rule['enabled'] ) ? __( 'Paused', 'vtx-redirects' ) : __( 'Active', 'vtx-redirects' ) ); ?></span></td>
-												<td data-label="<?php esc_attr_e( 'Source', 'vtx-redirects' ); ?>"><input class="vtx-inline" name="rules[<?php echo esc_attr( $index ); ?>][source]" value="<?php echo esc_attr( $rule['source'] ); ?>"></td>
-												<td data-label="<?php esc_attr_e( 'Destination', 'vtx-redirects' ); ?>"><input class="vtx-inline" name="rules[<?php echo esc_attr( $index ); ?>][destination]" value="<?php echo esc_attr( $rule['destination'] ); ?>"></td>
-												<td data-label="<?php esc_attr_e( 'Code', 'vtx-redirects' ); ?>"><?php $this->code_select( 'rules[' . $index . '][code]', (int) $rule['code'], 'vtx-small-select' ); ?></td>
-												<td data-label="<?php esc_attr_e( 'Usage', 'vtx-redirects' ); ?>"><button class="button vtx-usage-btn" type="button" data-source="<?php echo esc_attr( $rule['source'] ); ?>" data-destination="<?php echo esc_attr( $rule['destination'] ); ?>"><?php esc_html_e( 'Find usage', 'vtx-redirects' ); ?></button></td>
-												<td data-label="<?php esc_attr_e( 'Actions', 'vtx-redirects' ); ?>" class="vtx-actions">
-													<button class="button button-primary" name="vtx_action" value="update:<?php echo esc_attr( $index ); ?>" type="submit"><?php esc_html_e( 'Save', 'vtx-redirects' ); ?></button>
-													<button class="button" name="vtx_action" value="toggle:<?php echo esc_attr( $index ); ?>" type="submit"><?php echo esc_html( empty( $rule['enabled'] ) ? __( 'Enable', 'vtx-redirects' ) : __( 'Pause', 'vtx-redirects' ) ); ?></button>
-													<button class="button vtx-danger vtx-delete-btn" name="vtx_action" value="delete:<?php echo esc_attr( $index ); ?>" type="submit"><?php esc_html_e( 'Delete', 'vtx-redirects' ); ?></button>
-												</td>
-											</tr>
-										<?php endforeach; ?>
-										</tbody>
-									</table>
-								</div>
-							</form>
-						<?php endif; ?>
-					</div>
-
-					<div class="vtx-panel" id="vtx-panel-bulk" role="tabpanel" aria-labelledby="vtx-tab-bulk" data-vtx-panel="bulk" hidden>
-						<h2><?php esc_html_e( 'Bulk edit', 'vtx-redirects' ); ?></h2>
-						<p class="vtx-help"><?php esc_html_e( 'One redirect per line. Format:', 'vtx-redirects' ); ?> <code>/source | /destination | 301 | active</code>. <?php esc_html_e( 'Use “paused” to import disabled rules.', 'vtx-redirects' ); ?></p>
-						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+						<form class="vtx-editor-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 							<?php wp_nonce_field( self::NONCE_ACTION ); ?>
 							<input type="hidden" name="action" value="vtx_redirects_save">
 							<input type="hidden" name="vtx_action" value="bulk_replace">
-							<textarea name="bulk_rules" class="vtx-bulk-textarea" spellcheck="false"><?php echo esc_textarea( $this->bulk_export( $rules ) ); ?></textarea>
-							<div class="vtx-bulk-actions"><button class="button button-primary vtx-button" type="submit"><?php esc_html_e( 'Replace all redirects', 'vtx-redirects' ); ?></button><span><?php esc_html_e( 'The complete list is validated before it is saved.', 'vtx-redirects' ); ?></span></div>
+							<textarea name="bulk_rules" class="vtx-bulk-textarea" spellcheck="false" aria-label="<?php esc_attr_e( 'Bulk redirect rules', 'vtx-redirects' ); ?>"><?php echo esc_textarea( $this->bulk_export( $rules ) ); ?></textarea>
+							<div class="vtx-bulk-actions">
+								<div><strong><?php esc_html_e( 'Validation runs first.', 'vtx-redirects' ); ?></strong><span><?php esc_html_e( 'Nothing is replaced when the rule graph is invalid.', 'vtx-redirects' ); ?></span></div>
+								<button class="button button-primary vtx-button-primary" type="submit"><?php esc_html_e( 'Validate & replace all', 'vtx-redirects' ); ?></button>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<div class="vtx-panel" id="vtx-panel-logs" role="tabpanel" aria-labelledby="vtx-tab-logs" data-vtx-panel="logs" hidden>
+					<div class="vtx-toolbar">
+						<div>
+							<h2><?php esc_html_e( 'Activity log', 'vtx-redirects' ); ?></h2>
+							<p><?php esc_html_e( 'A lightweight record of redirect management actions.', 'vtx-redirects' ); ?></p>
+						</div>
+						<button class="button vtx-button-quiet vtx-clear-logs" type="button"><span class="dashicons dashicons-trash" aria-hidden="true"></span><?php esc_html_e( 'Clear activity', 'vtx-redirects' ); ?></button>
+					</div>
+					<div class="vtx-timeline vtx-log-list">
+						<?php if ( empty( $logs ) ) : ?>
+							<div class="vtx-empty-compact"><span class="dashicons dashicons-backup" aria-hidden="true"></span><p><?php esc_html_e( 'No activity yet. Changes you make will appear here.', 'vtx-redirects' ); ?></p></div>
+						<?php endif; ?>
+						<?php foreach ( $logs as $log ) : ?>
+							<div class="vtx-log-item">
+								<span class="vtx-log-marker" aria-hidden="true"></span>
+								<div class="vtx-log-copy">
+									<div><strong><?php echo esc_html( $log['action'] ); ?></strong><time><?php echo esc_html( $log['time'] ); ?></time></div>
+									<p><?php echo esc_html( $log['message'] ); ?></p>
+								</div>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			</section>
+
+			<div class="vtx-drawer-overlay" aria-hidden="true">
+				<aside class="vtx-drawer" role="dialog" aria-modal="true" aria-labelledby="vtx-drawer-title">
+					<div class="vtx-drawer-head">
+						<div>
+							<span class="vtx-section-kicker"><?php esc_html_e( 'VTX Redirects', 'vtx-redirects' ); ?></span>
+							<h2 id="vtx-drawer-title" data-vtx-drawer-title><?php esc_html_e( 'New redirect', 'vtx-redirects' ); ?></h2>
+						</div>
+						<button class="vtx-drawer-close" type="button" aria-label="<?php esc_attr_e( 'Close panel', 'vtx-redirects' ); ?>"><span class="dashicons dashicons-no-alt" aria-hidden="true"></span></button>
+					</div>
+
+					<div class="vtx-drawer-view" data-vtx-drawer-view="add">
+						<p class="vtx-drawer-lead"><?php esc_html_e( 'Create one exact-path redirect. Duplicates and redirect loops are blocked before save.', 'vtx-redirects' ); ?></p>
+						<form class="vtx-drawer-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+							<?php wp_nonce_field( self::NONCE_ACTION ); ?>
+							<input type="hidden" name="action" value="vtx_redirects_save">
+							<input type="hidden" name="vtx_action" value="add">
+							<label><span><?php esc_html_e( 'Source path', 'vtx-redirects' ); ?></span><input name="source" required placeholder="/old-page" autocomplete="off"><small><?php esc_html_e( 'The old path visitors currently request.', 'vtx-redirects' ); ?></small></label>
+							<label><span><?php esc_html_e( 'Destination', 'vtx-redirects' ); ?></span><input name="destination" required placeholder="/new-page or https://example.com/" autocomplete="off"><small><?php esc_html_e( 'Internal path or complete HTTP(S) URL.', 'vtx-redirects' ); ?></small></label>
+							<div class="vtx-form-split">
+								<label><span><?php esc_html_e( 'Status code', 'vtx-redirects' ); ?></span><?php $this->code_select( 'code', 301 ); ?></label>
+								<label class="vtx-toggle-row">
+									<input type="checkbox" name="enabled" value="1" checked>
+									<span class="vtx-toggle" aria-hidden="true"></span>
+									<span><strong><?php esc_html_e( 'Active immediately', 'vtx-redirects' ); ?></strong><small><?php esc_html_e( 'Start redirecting as soon as it is saved.', 'vtx-redirects' ); ?></small></span>
+								</label>
+							</div>
+							<div class="vtx-drawer-actions">
+								<button class="button vtx-drawer-cancel" type="button"><?php esc_html_e( 'Cancel', 'vtx-redirects' ); ?></button>
+								<button class="button button-primary vtx-button-primary" type="submit"><?php esc_html_e( 'Create redirect', 'vtx-redirects' ); ?></button>
+							</div>
 						</form>
 					</div>
 
-					<div class="vtx-panel" id="vtx-panel-logs" role="tabpanel" aria-labelledby="vtx-tab-logs" data-vtx-panel="logs" hidden>
-						<div class="vtx-toolbar"><h2><?php esc_html_e( 'Activity', 'vtx-redirects' ); ?></h2><button class="button vtx-clear-logs" type="button"><?php esc_html_e( 'Clear activity', 'vtx-redirects' ); ?></button></div>
-						<div class="vtx-log-list">
-							<?php if ( empty( $logs ) ) : ?>
-								<p><?php esc_html_e( 'No activity yet.', 'vtx-redirects' ); ?></p>
-							<?php endif; ?>
-							<?php foreach ( $logs as $log ) : ?>
-								<div class="vtx-log-item"><strong><?php echo esc_html( $log['action'] ); ?></strong><span><?php echo esc_html( $log['time'] ); ?></span><p><?php echo esc_html( $log['message'] ); ?></p></div>
-							<?php endforeach; ?>
-						</div>
+					<div class="vtx-drawer-view" data-vtx-drawer-view="settings" hidden>
+						<p class="vtx-drawer-lead"><?php esc_html_e( 'Keep runtime behavior predictable with a small set of explicit settings.', 'vtx-redirects' ); ?></p>
+						<form class="vtx-drawer-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+							<?php wp_nonce_field( self::NONCE_ACTION ); ?>
+							<input type="hidden" name="action" value="vtx_redirects_save">
+							<input type="hidden" name="vtx_action" value="settings">
+							<label class="vtx-setting-box">
+								<input type="checkbox" name="preserve_query" value="1" <?php checked( ! empty( $settings['preserve_query'] ) ); ?>>
+								<span class="vtx-setting-copy"><strong><?php esc_html_e( 'Preserve incoming query strings', 'vtx-redirects' ); ?></strong><small><?php esc_html_e( 'Append the original query string when the configured destination does not already contain one.', 'vtx-redirects' ); ?></small></span>
+							</label>
+							<div class="vtx-drawer-actions">
+								<button class="button vtx-drawer-cancel" type="button"><?php esc_html_e( 'Cancel', 'vtx-redirects' ); ?></button>
+								<button class="button button-primary vtx-button-primary" type="submit"><?php esc_html_e( 'Save settings', 'vtx-redirects' ); ?></button>
+							</div>
+						</form>
 					</div>
-				</section>
+				</aside>
 			</div>
 
 			<div class="vtx-usage-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="vtx-usage-title">
-				<div class="vtx-usage-box" role="document"><button class="vtx-modal-close" type="button" aria-label="<?php esc_attr_e( 'Close', 'vtx-redirects' ); ?>">×</button><h2 id="vtx-usage-title"><?php esc_html_e( 'Usage results', 'vtx-redirects' ); ?></h2><div class="vtx-usage-content" aria-live="polite"></div></div>
+				<div class="vtx-usage-box" role="document">
+					<button class="vtx-modal-close" type="button" aria-label="<?php esc_attr_e( 'Close', 'vtx-redirects' ); ?>">×</button>
+					<span class="vtx-section-kicker"><?php esc_html_e( 'Content audit', 'vtx-redirects' ); ?></span>
+					<h2 id="vtx-usage-title"><?php esc_html_e( 'Usage results', 'vtx-redirects' ); ?></h2>
+					<div class="vtx-usage-content" aria-live="polite"></div>
+				</div>
 			</div>
 		</div>
 		<?php

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.1.1
+
+- Icon alignment and button baseline polish across the admin workspace.
+- Added the youneed.dev brand logo to the application header.
+- Added restrained orange VTX/youneed.dev accent styling while preserving the existing functional hierarchy.
+
+- Redesigned the admin experience as a focused full-width redirect workspace.
+- Moved new redirect creation and settings into accessible side panels.
+- Added status filtering and refined search, table actions, bulk editing, and activity views.
+- Improved responsive composition, focus states, and reduced-motion behavior.
+
+## 2.0.2
+
+- Refreshed the WordPress administration UI with a modern VTX Labs design system.
+- Improved responsive behavior, accessibility focus states, table hierarchy and reduced-motion handling.
+- Updated WordPress.org contributor metadata to `vtxlabs`.
+
 ## 2.0.1
 
 - Finalized WordPress coding standards compliance.

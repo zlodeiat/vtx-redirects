@@ -2,6 +2,7 @@
   'use strict';
 
   var lastFocusedElement = null;
+  var lastDrawerFocus = null;
 
   function escapeHtml(value) {
     return $('<div>').text(value == null ? '' : String(value)).html();
@@ -32,6 +33,40 @@
     $panel.addClass('is-active').removeAttr('hidden');
   }
 
+  function openDrawer(view) {
+    var title = view === 'settings' ? VTXRedirects.drawerSettings : VTXRedirects.drawerAdd;
+
+    lastDrawerFocus = document.activeElement;
+    $('[data-vtx-drawer-view]').attr('hidden', true);
+    $('[data-vtx-drawer-view="' + view + '"]').removeAttr('hidden');
+    $('[data-vtx-drawer-title]').text(title);
+    $('.vtx-drawer-overlay').addClass('is-open').attr('aria-hidden', 'false');
+    $('body').addClass('vtx-drawer-open');
+    window.requestAnimationFrame(function () {
+      $('.vtx-drawer-close').trigger('focus');
+    });
+  }
+
+  function closeDrawer() {
+    $('.vtx-drawer-overlay').removeClass('is-open').attr('aria-hidden', 'true');
+    $('body').removeClass('vtx-drawer-open');
+    if (lastDrawerFocus) {
+      $(lastDrawerFocus).trigger('focus');
+    }
+  }
+
+  function filterRows() {
+    var query = String($('#vtx-search').val() || '').toLowerCase().trim();
+    var status = String($('#vtx-status-filter').val() || 'all');
+
+    $('#vtx-rules-table tbody tr').each(function () {
+      var $row = $(this);
+      var matchesQuery = !query || String($row.data('search') || '').indexOf(query) !== -1;
+      var matchesStatus = status === 'all' || String($row.data('vtx-state') || '') === status;
+      $row.toggle(matchesQuery && matchesStatus);
+    });
+  }
+
   $(document).on('click', '.vtx-tab', function () {
     activateTab($(this).data('vtx-tab'));
   });
@@ -39,6 +74,7 @@
   $(document).on('keydown', '.vtx-tab', function (event) {
     var $tabs = $('.vtx-tab');
     var index = $tabs.index(this);
+
     if (event.key === 'ArrowRight') {
       event.preventDefault();
       $tabs.eq((index + 1) % $tabs.length).trigger('focus').trigger('click');
@@ -48,12 +84,22 @@
     }
   });
 
-  $('#vtx-search').on('input', function () {
-    var query = $(this).val().toLowerCase().trim();
-    $('#vtx-rules-table tbody tr').each(function () {
-      $(this).toggle(!query || String($(this).data('search')).indexOf(query) !== -1);
-    });
+  $(document).on('click', '[data-vtx-drawer]', function () {
+    openDrawer(String($(this).data('vtx-drawer') || 'add'));
   });
+
+  $(document).on('click', '.vtx-drawer-close, .vtx-drawer-cancel', function () {
+    closeDrawer();
+  });
+
+  $(document).on('click', '.vtx-drawer-overlay', function (event) {
+    if ($(event.target).is('.vtx-drawer-overlay')) {
+      closeDrawer();
+    }
+  });
+
+  $('#vtx-search').on('input', filterRows);
+  $('#vtx-status-filter').on('change', filterRows);
 
   $(document).on('click', '.vtx-delete-btn', function (event) {
     if (!window.confirm(VTXRedirects.confirmDelete)) {
@@ -94,7 +140,7 @@
     }).fail(function () {
       openModal('<p>' + escapeHtml(VTXRedirects.scanFailed) + '</p>');
     }).always(function () {
-      $button.prop('disabled', false).text(VTXRedirects.findUsage);
+      $button.prop('disabled', false).html('<span class="dashicons dashicons-search" aria-hidden="true"></span>' + escapeHtml(VTXRedirects.findUsage));
     });
   });
 
@@ -105,8 +151,14 @@
   });
 
   $(document).on('keydown', function (event) {
-    if (event.key === 'Escape' && $('.vtx-usage-modal').hasClass('is-open')) {
+    if (event.key !== 'Escape') {
+      return;
+    }
+
+    if ($('.vtx-usage-modal').hasClass('is-open')) {
       closeModal();
+    } else if ($('.vtx-drawer-overlay').hasClass('is-open')) {
+      closeDrawer();
     }
   });
 
@@ -120,7 +172,7 @@
       nonce: VTXRedirects.nonce
     }).done(function (response) {
       if (response && response.success) {
-        $('.vtx-log-list').html('<p>' + escapeHtml(VTXRedirects.noLogs) + '</p>');
+        $('.vtx-log-list').html('<div class="vtx-empty-compact"><span class="dashicons dashicons-backup" aria-hidden="true"></span><p>' + escapeHtml(VTXRedirects.noLogs) + '</p></div>');
       }
     });
   });
