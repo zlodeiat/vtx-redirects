@@ -12,10 +12,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class Normalizer {
+	/**
+	 * Supported redirect status codes.
+	 *
+	 * @return int[]
+	 */
 	public static function allowed_status_codes() {
 		return array( 301, 302, 307, 308 );
 	}
 
+	/**
+	 * Normalize a source URL/path to a path only.
+	 *
+	 * @param string $value Source value.
+	 * @return string
+	 */
 	public static function source_path( $value ) {
 		$value = trim( (string) $value );
 		if ( '' === $value ) {
@@ -35,6 +46,12 @@ final class Normalizer {
 		return sanitize_text_field( $value );
 	}
 
+	/**
+	 * Normalize destination while preserving URL query fragments when valid.
+	 *
+	 * @param string $value Destination value.
+	 * @return string
+	 */
 	public static function destination( $value ) {
 		$value = trim( (string) $value );
 		if ( '' === $value ) {
@@ -52,6 +69,12 @@ final class Normalizer {
 		return $path . $query;
 	}
 
+	/**
+	 * Normalize a complete rule.
+	 *
+	 * @param array<string,mixed> $rule Raw rule.
+	 * @return array<string,mixed>
+	 */
 	public static function rule( $rule ) {
 		$code = isset( $rule['code'] ) ? absint( $rule['code'] ) : 301;
 		if ( ! in_array( $code, self::allowed_status_codes(), true ) ) {
@@ -66,8 +89,17 @@ final class Normalizer {
 		);
 	}
 
+	/**
+	 * Normalize and deduplicate a rule collection.
+	 *
+	 * Last matching source wins.
+	 *
+	 * @param array<int,array<string,mixed>> $rules Rules.
+	 * @return array<int,array<string,mixed>>
+	 */
 	public static function rules( $rules ) {
 		$by_source = array();
+
 		foreach ( (array) $rules as $rule ) {
 			$prepared = self::rule( $rule );
 			if ( '' === $prepared['source'] || '' === $prepared['destination'] ) {
@@ -75,21 +107,41 @@ final class Normalizer {
 			}
 			$by_source[ $prepared['source'] ] = $prepared;
 		}
+
 		return array_values( $by_source );
 	}
 
+	/**
+	 * Determine whether a value is an absolute HTTP(S) URL.
+	 *
+	 * @param string $value Value.
+	 * @return bool
+	 */
 	public static function is_external_url( $value ) {
 		return 1 === preg_match( '#^https?://#i', trim( (string) $value ) );
 	}
 
+	/**
+	 * Return the path part of an internal destination.
+	 *
+	 * @param string $destination Destination.
+	 * @return string
+	 */
 	public static function destination_path( $destination ) {
 		if ( self::is_external_url( $destination ) ) {
 			return '';
 		}
+
 		$path = wp_parse_url( $destination, PHP_URL_PATH );
 		return self::source_path( is_string( $path ) ? $path : $destination );
 	}
 
+	/**
+	 * Sanitize a query string without turning it into HTML.
+	 *
+	 * @param string $query Query string.
+	 * @return string
+	 */
 	private static function sanitize_query_string( $query ) {
 		$pairs = array();
 		parse_str( (string) $query, $pairs );

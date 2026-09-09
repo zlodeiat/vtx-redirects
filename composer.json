@@ -1,0 +1,21 @@
+{
+  "name": "vortex/vtx-redirects",
+  "description": "Development tooling for the VTX Redirects WordPress plugin.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "wp-coding-standards/wpcs": "^3.2"
+  },
+  "scripts": {
+    "lint": "find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l",
+    "phpcs": "phpcs --standard=phpcs.xml.dist"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "sort-packages": true
+  }
+}

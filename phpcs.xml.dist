@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset name="VTX Redirects">
+    <description>WordPress coding standards for VTX Redirects.</description>
+    <file>vtx-redirects.php</file>
+    <file>includes</file>
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <arg name="extensions" value="php"/>
+    <arg name="basepath" value="."/>
+    <rule ref="WordPress"/>
+    <rule ref="PHPCompatibilityWP">
+        <properties>
+            <property name="testVersion" value="7.4-"/>
+        </properties>
+    </rule>
+    <config name="minimum_supported_wp_version" value="6.5"/>
+</ruleset>
