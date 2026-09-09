@@ -24,12 +24,12 @@ define( 'VTX_REDIRECTS_FILE', __FILE__ );
 define( 'VTX_REDIRECTS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VTX_REDIRECTS_URL', plugin_dir_url( __FILE__ ) );
 
-require_once VTX_REDIRECTS_DIR . 'includes/class-vtx-redirects-normalizer.php';
-require_once VTX_REDIRECTS_DIR . 'includes/class-vtx-redirects-repository.php';
-require_once VTX_REDIRECTS_DIR . 'includes/class-vtx-redirects-logger.php';
-require_once VTX_REDIRECTS_DIR . 'includes/class-vtx-redirects-usage-scanner.php';
-require_once VTX_REDIRECTS_DIR . 'includes/class-vtx-redirects-admin.php';
-require_once VTX_REDIRECTS_DIR . 'includes/class-vtx-redirects-plugin.php';
+require_once VTX_REDIRECTS_DIR . 'includes/class-normalizer.php';
+require_once VTX_REDIRECTS_DIR . 'includes/class-repository.php';
+require_once VTX_REDIRECTS_DIR . 'includes/class-logger.php';
+require_once VTX_REDIRECTS_DIR . 'includes/class-usage-scanner.php';
+require_once VTX_REDIRECTS_DIR . 'includes/class-admin.php';
+require_once VTX_REDIRECTS_DIR . 'includes/class-plugin.php';
 
 register_activation_hook( __FILE__, array( 'Vortex\\Vtx_Redirects\\Plugin', 'activate' ) );
 add_action( 'plugins_loaded', array( 'Vortex\\Vtx_Redirects\\Plugin', 'instance' ) );
