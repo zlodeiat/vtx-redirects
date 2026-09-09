@@ -10,7 +10,7 @@
   },
   "scripts": {
     "lint": "find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l",
-    "phpcs": "phpcs --standard=phpcs.xml.dist"
+    "phpcs": "php -d 'error_reporting=E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED' vendor/bin/phpcs --standard=phpcs.xml.dist"
   },
   "config": {
     "allow-plugins": {

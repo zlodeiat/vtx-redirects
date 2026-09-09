@@ -4,7 +4,7 @@ Tags: redirects, redirect manager, 301 redirects, seo, migration
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,10 @@ No. Redirect data is intentionally preserved so an accidental uninstall does not
 3. Bulk editor and activity log.
 
 == Changelog ==
+
+= 2.0.1 =
+* Finalized WordPress coding standards compliance and normalized cross-platform line endings.
+* Improved CI by separating PHP syntax checks from coding-standards checks.
 
 = 2.0.0 =
 * Rebuilt the plugin around a modular repository, runtime, admin, logger, and scanner architecture.

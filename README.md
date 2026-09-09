@@ -45,6 +45,9 @@ composer lint
 composer phpcs
 ```
 
+The repository enforces LF line endings through `.gitattributes` so local Windows checkouts and Linux CI produce consistent PHPCS results.
+
+
 ## WordPress.org
 
 The plugin includes a WordPress.org-compatible `readme.txt`, GPL-2.0-or-later licensing metadata, translation-ready strings and human-readable source code.

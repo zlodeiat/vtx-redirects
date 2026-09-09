@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.1
+
+- Finalized WordPress coding standards compliance.
+- Normalized repository line endings with `.gitattributes`.
+- Split CI syntax and coding-standards checks for reliable PHP 7.4–8.4 coverage.
+
 ## 2.0.0
 
 - Refactored the original plugin into focused runtime, repository, admin, logger, normalizer and scanner classes.

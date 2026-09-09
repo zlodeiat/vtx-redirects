@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       VTX Redirects
  * Description:       A lightweight redirect manager with bulk editing, usage scanning, activity logs, and safe internal or external redirects.
- * Version:           2.0.0
+ * Version:           2.0.1
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Vortex
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'VTX_REDIRECTS_VERSION', '2.0.0' );
+define( 'VTX_REDIRECTS_VERSION', '2.0.1' );
 define( 'VTX_REDIRECTS_FILE', __FILE__ );
 define( 'VTX_REDIRECTS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VTX_REDIRECTS_URL', plugin_dir_url( __FILE__ ) );

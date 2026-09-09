@@ -282,7 +282,7 @@ final class Admin {
 		$result = true;
 
 		if ( 'add' === $action ) {
-			$rule = Normalizer::rule(
+			$rule   = Normalizer::rule(
 				array(
 					'source'      => isset( $_POST['source'] ) ? sanitize_text_field( wp_unslash( $_POST['source'] ) ) : '',
 					'destination' => isset( $_POST['destination'] ) ? sanitize_text_field( wp_unslash( $_POST['destination'] ) ) : '',
@@ -317,7 +317,7 @@ final class Admin {
 				$this->set_notice( __( 'Redirect deleted.', 'vtx-redirects' ) );
 			} elseif ( 'toggle' === $verb ) {
 				$rules[ $index ]['enabled'] = empty( $rules[ $index ]['enabled'] );
-				$result = $this->repository->validate_graph( $rules );
+				$result                     = $this->repository->validate_graph( $rules );
 				if ( true === $result ) {
 					$this->repository->save( $rules );
 					$this->logger->add( ! empty( $rules[ $index ]['enabled'] ) ? __( 'Enabled', 'vtx-redirects' ) : __( 'Paused', 'vtx-redirects' ), $rules[ $index ]['source'] );
@@ -334,7 +334,7 @@ final class Admin {
 						'enabled'     => ! empty( $rules[ $index ]['enabled'] ),
 					)
 				);
-				$result = $this->validate_rule_input( $updated );
+				$result       = $this->validate_rule_input( $updated );
 				if ( true === $result && null !== $this->repository->find_source_index( $updated['source'], $index ) ) {
 					$result = new \WP_Error( 'vtx_duplicate_source', __( 'Another redirect already uses that source path.', 'vtx-redirects' ) );
 				}
